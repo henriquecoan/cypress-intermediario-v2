@@ -17,6 +17,7 @@
 import './gui_commands.js'
 import './api_commands.js'
 import 'cypress-plugin-api'
+import './cli_commands.js'
 
 
 // Alternatively you can use CommonJS syntax:

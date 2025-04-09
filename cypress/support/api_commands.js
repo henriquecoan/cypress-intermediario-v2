@@ -14,6 +14,33 @@ Cypress.Commands.add('api_createProject', project => {
   Cypress.env('api_projectName', project.name)
 })
 
+Cypress.Commands.add('api_createIssue', issue => {
+  cy.api_createProject(issue.project)
+  .then(response => {
+    cy.request({
+      method: 'POST',
+      url: `/api/v4/projects/${response.body.id}/issues`,
+      body: {
+        title: issue.title,
+        description: issue.description
+      },
+      headers: { Authorization: accessToken },
+    })
+  })
+})
+
+Cypress.Commands.add('api_createLabel', (projectId, label) => {
+  cy.request({
+    method: 'POST',
+    url: `/api/v4/projects/${projectId}/labels`,
+    body: {
+      name: label.name,
+      color: label.color
+    },
+    headers: { Authorization: accessToken },
+  })
+})
+
 Cypress.Commands.add('api_getProject', () => {
     cy.request({
       method: 'GET',
@@ -22,7 +49,7 @@ Cypress.Commands.add('api_getProject', () => {
     })
   })
 
-Cypress.Commands.add('api_deleteProject', () => {
+Cypress.Commands.add('api_deleteProjects', () => {
     cy.api_getProject().then(response => {
       response.body.forEach(item => {
         cy.request({
@@ -31,5 +58,14 @@ Cypress.Commands.add('api_deleteProject', () => {
             headers: { Authorization: accessToken },
         });
       })
+    })
+  })
+
+  Cypress.Commands.add('api_createMilestone', (projectId, milestone) => {
+    cy.request({
+      method: 'POST',
+      url: `/api/v4/projects/${projectId}/milestones`,
+      body: { title: milestone.title },
+      headers: { Authorization: accessToken },
     })
   })
